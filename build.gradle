@@ -41,7 +41,8 @@ subprojects {
                 }
 
                 defaultConfig {
-                    minSdkVersion 9
+                    minSdkVersion 23
+
                     targetSdkVersion 24
                     versionCode 184
                     versionName "1.8.4"
