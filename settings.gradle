@@ -1,1 +1,1 @@
-include "core", "zbar", ":app"
+include ":app"

@@ -1,13 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 26
     defaultConfig {
         applicationId "com.nfd.libgenscan"
-        minSdkVersion 21
-        targetSdkVersion 25
+        //can this be older?
+        minSdkVersion 23
+        targetSdkVersion 26
         versionCode 1
-        versionName "1.0"
+        versionName "1.2"
     }
     buildTypes {
         release {
@@ -21,7 +22,9 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:25.+'
-    compile 'me.dm7.barcodescanner:zbar:1.9'
+    // testCompile 'junit:junit:4.12'
+    compile 'com.android.support:support-v4:26.0.1@aar'
+    compile 'com.android.support:appcompat-v7:26.0.1@aar'
+    compile 'me.dm7.barcodescanner:zbar:1.9.8'
+
 }
