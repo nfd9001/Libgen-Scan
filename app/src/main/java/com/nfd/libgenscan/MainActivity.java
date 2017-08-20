@@ -2,6 +2,7 @@ package com.nfd.libgenscan;
 
 import android.os.Build;
 import android.widget.Toast;
+import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import me.dm7.barcodescanner.zbar.*;
@@ -13,12 +14,15 @@ import android.content.pm.PackageManager;
 /* Scanning UI and main menu. This should always be the first thing the user sees on launch.
  * TODO: add history menu, autoscan option, and restore support for pre-Marshmallow if possible
  */
-public class MainActivity extends AppCompatActivity implements ZBarScannerView.ResultHandler {
+
+//AppCompatActivity was actually causing crashes?
+public class MainActivity extends Activity implements ZBarScannerView.ResultHandler {
     private ZBarScannerView mScannerView;
     private boolean autosearch = true; //TODO: add switching (new Activity, along with menu of bookrefs)
     public static final int PERMISSION_REQUEST_CAMERA = 1;
 
 
+    //TODO: annotate s.t. < 23 are accepted
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
