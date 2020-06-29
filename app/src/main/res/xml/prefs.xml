@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                                      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <SwitchPreferenceCompat
+            app:key="autosearch"
+            app:title="Automatically search on scan."/>
+    <SwitchPreferenceCompat
+            app:key="history"
+            app:title="Keep scan history."/>
+    <Preference
+            app:key="chooseprovider"
+            app:title="Choose search provider..."/>
+
+
+</androidx.preference.PreferenceScreen>

@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Libgen Scan</string>
+    <string name="st_hist">History</string>
+    <string name="st_options">Options</string>
+    <string name="badformat">Barcode format not supported; try searching manually.</string>
+    <string name="add_a_provider">Add a provider</string>
+
 </resources>

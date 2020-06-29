@@ -1,10 +1,12 @@
 buildscript {
     repositories {
+        jcenter()
+        google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'com.android.tools.build:gradle:3.5.1'
     }
 }
 
@@ -17,12 +19,13 @@ allprojects {
         maven {
             url 'https://maven.google.com'
         }
+        google()
     }
 
     ext {
-        supportLibraryDependency = 'com.android.support:support-v4:26.0.1@aar'
         isLibrary = false
     }
+
 }
 
 subprojects {
@@ -30,9 +33,7 @@ subprojects {
         ext.pluginContainer = project.getPlugins()
         if (ext.pluginContainer.hasPlugin("com.android.application") || ext.pluginContainer.hasPlugin("com.android.library")) {
             android {
-                compileSdkVersion 26
-                buildToolsVersion '25.0.3'
-
+                compileSdkVersion 28
                 android {
                     lintOptions {
                         abortOnError false
@@ -40,17 +41,11 @@ subprojects {
                 }
 
                 defaultConfig {
-                    minSdkVersion 23
-
-                    targetSdkVersion 26
-                    versionCode 184
-                    versionName "1.8.4"
+                    minSdkVersion 24
+                    targetSdkVersion 28
                 }
             }
         }
     }
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.14'
-}
