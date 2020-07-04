@@ -1,8 +1,7 @@
 package com.nfd.libgenscan;
 
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import data.AppDatabase;
 import data.book.BookRef;
 import android.view.Menu;
@@ -90,18 +89,17 @@ public class MainActivity extends AppCompatActivity implements ZBarScannerView.R
                     Toast.LENGTH_SHORT).show();
             mScannerView.resumeCameraPreview(this);
         }
-        BookRef b = new BookRef(rawResult.getContents(), false);
+        final BookRef b = new BookRef(rawResult.getContents(), false);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         boolean a = sp.getBoolean("autosearch", true);
         if (sp.getBoolean("history", true)){
             if (a){b.opened = true;}
-            new AsyncTask<BookRef, Void, Void>(){
+            new Thread(new Runnable() {
                 @Override
-                protected Void doInBackground(BookRef... bookRefs) {
-                    AppDatabase.getInstance(getApplicationContext()).bookRefDao().insertAll(bookRefs);
-                    return null;
+                public void run() {
+                    AppDatabase.getInstance(getApplicationContext()).bookRefDao().insertAll(b);
                 }
-            }.execute(b);
+            }).start();
         }
         mScannerView.resumeCameraPreview(this);
     }
@@ -117,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements ZBarScannerView.R
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case(R.id.main_opt):
-                Intent i = new Intent(this, PrefsActivity.class);
+                Intent i = new Intent(getApplicationContext(), PrefsActivity.class);
                 startActivity(i);
                 return true;
             case (R.id.main_hist):

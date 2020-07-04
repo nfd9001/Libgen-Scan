@@ -18,7 +18,16 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".PrefsActivity"/>
-    </application>
 
+        <activity android:name=".PrefsActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".MainActivity"/>
+        </activity>
+        <activity android:name=".ProviderChoiceActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".PrefsActivity"/>
+        </activity>
+    </application>
 </manifest>

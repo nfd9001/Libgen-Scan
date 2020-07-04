@@ -2,8 +2,12 @@ package com.nfd.libgenscan;
 
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceFragmentCompat;
+
+import java.util.Objects;
 
 /**
  * @author Alexander Ronsse-Tucherov
@@ -11,12 +15,14 @@ import androidx.appcompat.app.AppCompatActivity;
  */
 public class PrefsActivity extends AppCompatActivity {
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("LGS", "Expanded fragment");
+        setContentView(R.layout.activity_prefs);
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.prefsLayout, new PrefsFragment())
+                .replace(R.id.prefs, new PrefsFragment())
                 .commit();
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Options");
     }
 }

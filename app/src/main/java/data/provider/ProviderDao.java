@@ -19,4 +19,16 @@ public interface ProviderDao {
 
     @Delete
     void deleteAll(Provider... providers);
+
+    @Update
+    void updateProviders(Provider... providers);
+
+    @Update
+    void updateProviders(List<Provider> providers);
+
+
+    @Query("select * from provider where selected")
+    List<Provider> findSelected();
+
+
 }

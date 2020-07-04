@@ -13,7 +13,7 @@ import data.provider.ProviderDao;
  * @author Alexander Ronsse-Tucherov
  * @version 2019-08-18.
  */
-@Database(entities = {Provider.class, BookRef.class}, version = 1)
+@Database(entities = {Provider.class, BookRef.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase instance;
     public static AppDatabase getInstance(Context context){

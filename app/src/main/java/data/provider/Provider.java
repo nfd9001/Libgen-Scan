@@ -22,14 +22,17 @@ public class Provider {
     @NonNull
     public String format;
 
-    public Provider(String name, String format){
+    public boolean selected;
+
+    public Provider(String name, String format) {
         this.name = name;
         this.format = format;
+        selected = false;
     }
 
     //Make sure to validate Providers before use.
-    public boolean validate(){
-        try{
+    public boolean validate() {
+        try {
             String.format(format, "0262510871");
         }
         catch (IllegalFormatException e){

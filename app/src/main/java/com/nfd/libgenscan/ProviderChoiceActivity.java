@@ -1,10 +1,20 @@
 package com.nfd.libgenscan;
 
 import android.os.Bundle;
+import android.view.ViewGroup;
+import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import data.AppDatabase;
+import data.provider.Provider;
+import data.provider.ProviderAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * @author Alexander Ronsse-Tucherov
@@ -12,18 +22,41 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public class ProviderChoiceActivity extends AppCompatActivity {
     private RecyclerView rv;
-    private RecyclerView.Adapter rvAdapter;
     private RecyclerView.LayoutManager lm;
+    List<Provider> providers;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_provider);
-        rv = (RecyclerView) findViewById(R.id.provider_recycler);
+        rv = findViewById(R.id.provider_recycler);
         rv.setHasFixedSize(true);
         lm = new LinearLayoutManager(this);
         rv.setLayoutManager(lm);
+        try {
+            providers = refreshProviders().get(200, TimeUnit.MILLISECONDS);
+        } catch (ExecutionException | TimeoutException | InterruptedException e) {
+            Toast.makeText(getApplicationContext(), getString(R.string.providerfetchfail),
+                    Toast.LENGTH_SHORT).show();
+            providers = new ArrayList<Provider>();
+            e.printStackTrace();
+        }
+        rv.setAdapter(new ProviderAdapter(null)); //null placeholder
+        rv.getAdapter().notifyDataSetChanged();
 
-        //set adapter...
 
+    }
+
+
+    FutureTask<List<Provider>> refreshProviders() {
+        return new FutureTask<>(
+                new Callable<List<Provider>>() {
+                    @Override
+                    public List<Provider> call() throws Exception {
+                        return AppDatabase
+                                .getInstance(getApplicationContext())
+                                .providerDao()
+                                .getAll();
+                    }
+                });
     }
 }

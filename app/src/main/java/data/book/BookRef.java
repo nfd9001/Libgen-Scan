@@ -1,10 +1,14 @@
 package data.book;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
 
+import data.provider.Provider;
 import me.dm7.barcodescanner.zbar.BarcodeFormat;
 
 @Entity
@@ -21,31 +25,17 @@ public class BookRef {
     @NonNull
     public Boolean opened;
 
+    public long timestamp;
+
     public BookRef(String id, boolean opened) {
         this.id = id;
         this.opened = opened;
+        Long ts = System.nanoTime(); //only useful for ordering the list, not for display
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public boolean isOpened() {
-        return opened;
-    }
-
-    /*
-    public static void addToList(BookRef b) {
-        bookList.add(b);
-    }
-
-    //TODO: add more libraries, possibly ways of handling other types of barcodes (search by UPC?)
-    public void searchBook() {
+    public void searchBook(Context context, Provider provider) {
         opened = true;
-        String uri = "http://libgen.io/search.php?req=" + id +
-                "&lg_topic=libgen&open=0&view=simple&res=25&phrase=1&column=identifier";
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-        parent.fire(browserIntent);
+        String uri = String.format(provider.format, id);
+        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)));
     }
-     */
 }

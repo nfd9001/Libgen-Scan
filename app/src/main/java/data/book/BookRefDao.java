@@ -8,7 +8,7 @@ import java.util.List;
  */
 @Dao
 public interface BookRefDao {
-    @Query("select * from bookref")
+    @Query("select * from bookref order by timestamp desc")
     List<BookRef> getAll();
 
     @Query("select * from bookref where opened")
