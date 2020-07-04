@@ -5,8 +5,9 @@ android {
     defaultConfig {
         applicationId "com.nfd.libgenscan"
         //can this be older?
-        minSdkVersion 24
+        minSdkVersion 23
         targetSdkVersion 30
+        versionCode 3
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {

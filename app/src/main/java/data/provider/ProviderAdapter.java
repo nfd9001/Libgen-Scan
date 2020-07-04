@@ -1,5 +1,6 @@
 package data.provider;
 
+import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,7 +28,9 @@ public class ProviderAdapter extends RecyclerView.Adapter<ProviderAdapter.PAHold
 
     public static class PAHolder extends RecyclerView.ViewHolder{
         public Provider provider;
-        public PAHolder(Provider )
 
+        public PAHolder(@NonNull View itemView) {
+            super(itemView);
+        }
     }
 }

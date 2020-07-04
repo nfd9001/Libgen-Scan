@@ -15,6 +15,7 @@ allprojects {
     version = '1.02.0'
 
     repositories {
+        jcenter()
         mavenCentral()
         maven {
             url 'https://maven.google.com'
@@ -41,7 +42,7 @@ subprojects {
                 }
 
                 defaultConfig {
-                    minSdkVersion 24
+                    minSdkVersion 23
                     targetSdkVersion 30
                 }
             }
