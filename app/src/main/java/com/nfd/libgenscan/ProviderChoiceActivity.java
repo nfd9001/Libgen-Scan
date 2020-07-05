@@ -48,7 +48,8 @@ public class ProviderChoiceActivity extends AppCompatActivity {
 
 
     FutureTask<List<Provider>> refreshProviders() {
-        return new FutureTask<>(
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        FutureTask<List<Provider>> t = new FutureTask<>(
                 new Callable<List<Provider>>() {
                     @Override
                     public List<Provider> call() throws Exception {
@@ -58,5 +59,7 @@ public class ProviderChoiceActivity extends AppCompatActivity {
                                 .getAll();
                     }
                 });
+        executor.execute(t);
+        return t;
     }
 }

@@ -17,6 +17,9 @@ public interface ProviderDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(Provider... providers);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<Provider> providers);
+
     @Delete
     void deleteAll(Provider... providers);
 

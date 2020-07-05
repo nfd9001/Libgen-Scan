@@ -1,14 +1,19 @@
 package com.nfd.libgenscan;
 
 import android.content.SharedPreferences;
+import android.util.Log;
 import androidx.preference.PreferenceManager;
+import androidx.room.Room;
 import data.AppDatabase;
+import data.DataHelpers;
 import data.book.BookRef;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import data.provider.Provider;
+import data.provider.ProviderDao;
 import me.dm7.barcodescanner.zbar.*;
 import android.content.Intent;
 import android.Manifest;
@@ -16,12 +21,14 @@ import android.content.pm.PackageManager;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.*;
 
 public class MainActivity extends AppCompatActivity implements ZBarScannerView.ResultHandler {
     private ZBarScannerView mScannerView;
     private static final int PERMISSION_REQUEST_CAMERA = 1;
     private static List<BarcodeFormat> allowedFormats = Arrays.asList(BarcodeFormat.ISBN10, BarcodeFormat.ISBN13);
 
+    Provider currentProvider;
 
     //TODO: annotate s.t. < 23 are accepted
     @Override
@@ -32,6 +39,14 @@ public class MainActivity extends AppCompatActivity implements ZBarScannerView.R
 
         if (!haveCameraPermission()) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CAMERA);
+        }
+        AppDatabase db = AppDatabase.getInstance(this);
+        ProviderDao providerDao = db.providerDao();
+
+        fetchSelectedProvider();
+        if (currentProvider == null) {
+            DataHelpers.addDefaultProviders(providerDao);
+            fetchSelectedProvider();
         }
     }
 
@@ -54,12 +69,12 @@ public class MainActivity extends AppCompatActivity implements ZBarScannerView.R
         }
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
         mScannerView.setResultHandler(this);
         mScannerView.startCamera();
+        fetchSelectedProvider();
     }
 
     @Override
@@ -74,17 +89,40 @@ public class MainActivity extends AppCompatActivity implements ZBarScannerView.R
         mScannerView.stopCamera();
         mScannerView = null;
     }
+
     private boolean isAllowed(BarcodeFormat b) {
         return allowedFormats.contains(b);
     }
-    //intended to fire URL opener intents from other classes
-    public void fire(Intent i) {
-        startActivity(i);
+
+    void fetchSelectedProvider() {
+        try {
+            FutureTask<List<Provider>> t = new FutureTask<>(
+                    new Callable<List<Provider>>() {
+                        @Override
+                        public List<Provider> call() throws Exception {
+                            Log.i("LGS", "Trying to set selected provider.");
+                            return AppDatabase
+                                    .getInstance(getApplicationContext())
+                                    .providerDao()
+                                    .findSelected();
+                        }
+                    });
+            ExecutorService executor = Executors.newFixedThreadPool(1);
+            executor.execute(t);
+
+            currentProvider = t.get(200, TimeUnit.MILLISECONDS).get(0);
+        } catch (ExecutionException | InterruptedException | TimeoutException e) {
+            Log.e("LGS", "Failed to fetch selected provider with a " + e.getClass().getCanonicalName());
+        } catch (IndexOutOfBoundsException e) {
+            Toast.makeText(getApplicationContext(), getString(R.string.cantSetProvider),
+                    Toast.LENGTH_LONG).show();
+            Log.i("LGS", "Got an empty list of providers back.");
+        }
     }
 
     @Override
     public void handleResult(Result rawResult) {
-        if (!isAllowed(rawResult.getBarcodeFormat())){
+        if (!isAllowed(rawResult.getBarcodeFormat())) {
             Toast.makeText(getApplicationContext(), getString(R.string.badformat),
                     Toast.LENGTH_SHORT).show();
             mScannerView.resumeCameraPreview(this);
@@ -92,8 +130,20 @@ public class MainActivity extends AppCompatActivity implements ZBarScannerView.R
         final BookRef b = new BookRef(rawResult.getContents(), false);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         boolean a = sp.getBoolean("autosearch", true);
-        if (sp.getBoolean("history", true)){
-            if (a){b.opened = true;}
+        boolean doSearch = false;
+        if (a) {
+            if (currentProvider == null) {
+                Toast.makeText(getApplicationContext(), getString(R.string.cantSetProvider),
+                        Toast.LENGTH_LONG).show();
+                a = false;
+            } else {
+                doSearch = true;
+            }
+        }
+        if (sp.getBoolean("history", true)) {
+            if (a) {
+                b.opened = true;
+            }
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -101,6 +151,8 @@ public class MainActivity extends AppCompatActivity implements ZBarScannerView.R
                 }
             }).start();
         }
+        b.searchBook(this, currentProvider);
+
         mScannerView.resumeCameraPreview(this);
     }
 

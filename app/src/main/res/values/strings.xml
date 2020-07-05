@@ -5,5 +5,6 @@
     <string name="badformat">Barcode format not supported; try searching manually.</string>
     <string name="add_a_provider">Add a provider</string>
     <string name="providerfetchfail">\"Failed to get list of providers.\"</string>
+    <string name="cantSetProvider">Failed to get the selected search provider. Try resetting it, and if this persists, file a bug report.</string>
 
 </resources>
