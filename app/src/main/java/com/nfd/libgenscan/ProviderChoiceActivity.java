@@ -40,12 +40,9 @@ public class ProviderChoiceActivity extends AppCompatActivity {
             providers = new ArrayList<Provider>();
             e.printStackTrace();
         }
-        rv.setAdapter(new ProviderAdapter(null)); //null placeholder
+        rv.setAdapter(new ProviderAdapter(providers));
         rv.getAdapter().notifyDataSetChanged();
-
-
     }
-
 
     FutureTask<List<Provider>> refreshProviders() {
         ExecutorService executor = Executors.newFixedThreadPool(1);

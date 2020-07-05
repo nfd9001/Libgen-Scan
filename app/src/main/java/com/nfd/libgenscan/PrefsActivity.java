@@ -3,11 +3,16 @@ package com.nfd.libgenscan;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
+import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceFragmentCompat;
+import data.AppDatabase;
+import data.provider.Provider;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.*;
 
 /**
  * @author Alexander Ronsse-Tucherov
@@ -25,4 +30,6 @@ public class PrefsActivity extends AppCompatActivity {
                 .commit();
         Objects.requireNonNull(getSupportActionBar()).setTitle("Options");
     }
+
+
 }

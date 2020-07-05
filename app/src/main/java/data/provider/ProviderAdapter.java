@@ -1,5 +1,6 @@
 package data.provider;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,8 +8,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.nfd.libgenscan.R;
+import data.AppDatabase;
+import data.DataHelpers;
 
 import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * @author Alexander Ronsse-Tucherov
@@ -16,6 +20,7 @@ import java.util.List;
  */
 public class ProviderAdapter extends RecyclerView.Adapter<ProviderAdapter.PAHolder> {
     List<Provider> l;
+    int selectedPosition = 0;
 
     public ProviderAdapter(List<Provider> l) {
         this.l = l;
@@ -30,9 +35,15 @@ public class ProviderAdapter extends RecyclerView.Adapter<ProviderAdapter.PAHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PAHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final PAHolder holder, final int position) {
         holder.p = l.get(position);
         holder.t.setText(holder.p.name);
+        if (holder.p.selected) {
+            holder.t.setBackgroundResource(R.drawable.background_emphasized);
+            selectedPosition = position;
+        } else {
+            holder.t.setBackgroundResource(R.drawable.background);
+        }
         holder.t.setOnLongClickListener(new View.OnLongClickListener() {
 
             @Override
@@ -44,7 +55,33 @@ public class ProviderAdapter extends RecyclerView.Adapter<ProviderAdapter.PAHold
         holder.t.setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
+                final RecyclerView rv = view.findViewById(R.id.provider_recycler);
+                if (holder.p.selected) {
+                    return;
+                }
+                try {
+                    FutureTask<Void> t = new FutureTask<>(
+                            new Callable<Void>() {
+                                @Override
+                                public Void call() throws Exception {
+                                    DataHelpers.setDefault(AppDatabase.getInstance(
+                                            view.getContext().getApplicationContext()).providerDao(),
+                                            holder.p);
+                                    return null;
+                                }
+                            }
+                    );
+                    ExecutorService executor = Executors.newFixedThreadPool(1);
+                    executor.execute(t);
+                    t.get(1, TimeUnit.SECONDS);
+                } catch (ExecutionException | InterruptedException | TimeoutException e) {
+                    Log.e("LGS", "Failed to set default providers with a " + e.getClass().getCanonicalName());
+                }
+                notifyItemChanged(position);
+                l.get(selectedPosition).selected = false;
+                notifyItemChanged(selectedPosition);
+                selectedPosition = position;
 
             }
         });
@@ -62,7 +99,7 @@ public class ProviderAdapter extends RecyclerView.Adapter<ProviderAdapter.PAHold
 
         public PAHolder(@NonNull View itemView) {
             super(itemView);
-            t = itemView.findViewById(R.id.isbn_textview);
+            t = itemView.findViewById(R.id.provider_name_textview);
         }
     }
 }

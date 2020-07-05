@@ -22,4 +22,6 @@ public class PrefsFragment extends PreferenceFragmentCompat {
         Log.d("LGS", "Some preference clicked: " + preference.getKey());
         return super.onPreferenceTreeClick(preference);
     }
+
+
 }
