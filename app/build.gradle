@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 30
     defaultConfig {
         applicationId "com.nfd.libgenscan"
         //can this be older?
         minSdkVersion 23
-        targetSdkVersion 26
-        versionCode 1
-        versionName "1.2"
+        targetSdkVersion 30
+        versionCode 3
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -16,15 +16,18 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    productFlavors {
-    }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    // testCompile 'junit:junit:4.12'
-    compile 'com.android.support:support-v4:26.0.1@aar'
-    compile 'com.android.support:appcompat-v7:26.0.1@aar'
-    compile 'me.dm7.barcodescanner:zbar:1.9.8'
-
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    // implementation 'androidx.legacy:legacy-support-v4:1.0.0@aar'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'me.dm7.barcodescanner:zbar:1.9.8'
+    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    def room_version = "2.2.5"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    implementation 'androidx.recyclerview:recyclerview:1.2.0-alpha04'
 }
