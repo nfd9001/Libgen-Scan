@@ -31,7 +31,7 @@ public class ProviderAdapter extends RecyclerView.Adapter<ProviderAdapter.PAHold
     public PAHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View provider = inflater.inflate(R.layout.provider_view, parent, false);
-        return new PAHolder((provider));
+        return new PAHolder(provider);
     }
 
     @Override

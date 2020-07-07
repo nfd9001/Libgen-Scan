@@ -1,23 +1,24 @@
 package com.nfd.libgenscan;
 
+import android.Manifest;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.util.Log;
-import androidx.preference.PreferenceManager;
-import androidx.room.Room;
-import data.AppDatabase;
-import data.DataHelpers;
-import data.book.BookRef;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
+import androidx.preference.PreferenceManager;
+import data.AppDatabase;
+import data.DataHelpers;
+import data.book.BookRef;
 import data.provider.Provider;
 import data.provider.ProviderDao;
-import me.dm7.barcodescanner.zbar.*;
-import android.content.Intent;
-import android.Manifest;
-import android.content.pm.PackageManager;
+import me.dm7.barcodescanner.zbar.BarcodeFormat;
+import me.dm7.barcodescanner.zbar.Result;
+import me.dm7.barcodescanner.zbar.ZBarScannerView;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.concurrent.*;
 public class MainActivity extends AppCompatActivity implements ZBarScannerView.ResultHandler {
     private ZBarScannerView mScannerView;
     private static final int PERMISSION_REQUEST_CAMERA = 1;
-    private static List<BarcodeFormat> allowedFormats = Arrays.asList(BarcodeFormat.ISBN10, BarcodeFormat.ISBN13);
+    private static final List<BarcodeFormat> allowedFormats = Arrays.asList(BarcodeFormat.ISBN10, BarcodeFormat.ISBN13);
 
     Provider currentProvider;
 
@@ -130,17 +131,12 @@ public class MainActivity extends AppCompatActivity implements ZBarScannerView.R
         final BookRef b = new BookRef(rawResult.getContents(), false);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         boolean a = sp.getBoolean("autosearch", true);
-        boolean doSearch = false;
-        if (a) {
-            if (currentProvider == null) {
-                Toast.makeText(getApplicationContext(), getString(R.string.cantSetProvider),
-                        Toast.LENGTH_LONG).show();
-                a = false;
-            } else {
-                doSearch = true;
-            }
+        boolean h = sp.getBoolean("history", true);
+        if (!a && !h) {
+            Toast.makeText(getApplicationContext(), getString(R.string.no_history_no_search),
+                    Toast.LENGTH_LONG).show();
         }
-        if (sp.getBoolean("history", true)) {
+        if (h) {
             if (a) {
                 b.opened = true;
             }
@@ -150,9 +146,17 @@ public class MainActivity extends AppCompatActivity implements ZBarScannerView.R
                     AppDatabase.getInstance(getApplicationContext()).bookRefDao().insertAll(b);
                 }
             }).start();
+            Toast.makeText(getApplicationContext(), getString(R.string.gotBook),
+                    Toast.LENGTH_SHORT).show();
         }
-        b.searchBook(this, currentProvider);
-
+        if (a) {
+            if (currentProvider == null) {
+                Toast.makeText(getApplicationContext(), getString(R.string.cantSetProvider),
+                        Toast.LENGTH_LONG).show();
+            } else {
+                b.searchBook(this, currentProvider);
+            }
+        }
         mScannerView.resumeCameraPreview(this);
     }
 
@@ -165,13 +169,19 @@ public class MainActivity extends AppCompatActivity implements ZBarScannerView.R
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
-            case(R.id.main_opt):
+        switch (item.getItemId()) {
+            case (R.id.main_opt):
                 Intent i = new Intent(getApplicationContext(), PrefsActivity.class);
                 startActivity(i);
                 return true;
             case (R.id.main_hist):
-                //TODO fill
+                Intent j = new Intent(getApplicationContext(), HistoryActivity.class);
+                if (currentProvider == null) {
+                    Log.i("LGS", "No provider to pass to History");
+                } else {
+                    j.putExtra("currentProvider", currentProvider);
+                }
+                startActivity(j);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

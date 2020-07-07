@@ -2,9 +2,17 @@
     <string name="app_name">Libgen Scan</string>
     <string name="st_hist">History</string>
     <string name="st_options">Options</string>
-    <string name="badformat">Barcode format not supported; try searching manually.</string>
+    <string name="badformat">The detected barcode format is not supported; try rescanning, then searching manually.</string>
     <string name="add_a_provider">Add a provider</string>
     <string name="providerfetchfail">\"Failed to get list of providers.\"</string>
     <string name="cantSetProvider">Failed to get the selected search provider. Try resetting it, and if this persists, file a bug report.</string>
+    <string name="gotBook">Got it! Check the history screen.</string>
+    <string name="ok">OK</string>
+    <string name="cancel">"Cancel"</string>
+    <string name="bad_provider_error">Bad provider format. Put a \"%s\" in ISBN location.</string>
+    <string name="name_required">A name is required.</string>
+    <string name="mirroraddedsass">Resource added. Try exiting and re-entering the menu to see it. (Sorry, I was too lazy to get this to work \"properly.\" The app\'s free. Suck it up)</string>
+    <string name="clear_history">Clear history</string>
+    <string name="no_history_no_search">You have both history and autosearch turned off. Turn at least one on in the settings.</string>
 
 </resources>

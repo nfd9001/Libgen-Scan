@@ -1,5 +1,7 @@
 package data.book;
+
 import androidx.room.*;
+
 import java.util.List;
 
 /**
@@ -23,10 +25,16 @@ public interface BookRefDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(BookRef... bookRefs);
 
+    @Update
+    void updateAll(BookRef... bookRefs);
+
     @Delete
     void deleteBookRefs(BookRef... bookRefs);
 
     @Delete
     void deleteBookRefs(List<BookRef> bookRefs);
+
+    @Query("delete from bookref")
+    void dropBookRefs();
 
 }
